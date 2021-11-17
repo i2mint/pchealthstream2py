@@ -291,22 +291,6 @@ class StatusInfoReader(SourceReader, threading.Thread):
             raise
 
 
-def test_simple():
-    with StatusInfoReader() as source:
-        time.sleep(3)
-        for i in range(2):
-            try:
-                data = source.read()
-                if data is not None:
-                    index, timestamp, info = data
-                    pprint(f'{index}.{timestamp}: {info}')
-
-            except KeyboardInterrupt as kb:
-                break
-
-    print('Done!')
-
-
 def main():
     with StatusInfoReader() as source:
         print('Ctrl+C to exit')
