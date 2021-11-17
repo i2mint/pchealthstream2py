@@ -1,3 +1,8 @@
+"""
+    Provide computer status info.
+
+    To get network upload and download speeds, speedtest-cli app should be installed
+"""
 #!/usr/bin/env python
 import operator
 import os
@@ -11,12 +16,6 @@ import platform
 
 from stream2py import SourceReader
 from stream2py.utility.typing_hints import ComparableType, Any
-
-"""
-    Provide computer status info. 
-    
-    To get network upload and download speeds, speedtest-cli app should be installed 
-"""
 
 __all__ = ['StatusInfo', 'StatusInfoReader']
 
