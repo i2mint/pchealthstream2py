@@ -291,8 +291,41 @@ class StatusInfoReader(SourceReader, threading.Thread):
             raise
 
 
-if __name__ == '__main__':
+def test_simple():
+    with StatusInfoReader() as source:
+        time.sleep(3)
+        for i in range(2):
+            try:
+                data = source.read()
+                if data is not None:
+                    index, timestamp, info = data
+                    pprint(f'{index}.{timestamp}: {info}')
 
+            except KeyboardInterrupt as kb:
+                break
+
+    print('Done!')
+
+
+def main():
+    with StatusInfoReader() as source:
+        print('Ctrl+C to exit')
+        time.sleep(3)
+        while True:
+            try:
+                data = source.read()
+                if data is not None:
+                    index, timestamp, info = data
+                    pprint(f'{index}.{timestamp}: {info}')
+
+            except KeyboardInterrupt as kb:
+                break
+
+    print('Done!')
+
+
+if __name__ == '__main__':
+    main()
     # As separated info
     # print(f"Memory:\n---------------------------------")
     # print(f"\tmem total {StatusInfo.mem_total()}")
@@ -318,18 +351,3 @@ if __name__ == '__main__':
 
     # or as a single JSON
     # print(StatusInfo.all(include_network_download_speed=True, include_network_upload_speed=True))
-
-    with StatusInfoReader() as source:
-        print('Ctrl+C to exit')
-        time.sleep(3)
-        while True:
-            try:
-                data = source.read()
-                if data is not None:
-                    index, timestamp, info = data
-                    pprint(f'{index}.{timestamp}: {info}')
-
-            except KeyboardInterrupt as kb:
-                break
-
-    print('Done!')
