@@ -1,25 +1,25 @@
 
 
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pchealthstream2py.pchealth &mdash; pchealthstream2py 0.1.2 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+  <title>pchealthstream2py.pchealth &mdash; pchealthstream2py 0.1.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
 
   
-      <script src="../../_static/jquery.js"></script>
-      <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-      <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-      <script src="../../_static/doctools.js"></script>
-      <script src="../../_static/sphinx_highlight.js"></script>
-      <script src="../../_static/toggleprompt.js"></script>
-      <script src="../../_static/clipboard.min.js"></script>
-      <script src="../../_static/copybutton.js"></script>
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=360bc84d"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/toggleprompt.js?v=d7ede5d2"></script>
+      <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -299,7 +299,9 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="StatusInfoReader"><a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">StatusInfoReader</span><span class="p">(</span><span class="n">SourceReader</span><span class="p">,</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+<div class="viewcode-block" id="StatusInfoReader">
+<a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StatusInfoReader</span><span class="p">(</span><span class="n">SourceReader</span><span class="p">,</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
     <span class="n">_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">_data</span><span class="p">:</span> <span class="n">SyncQueue</span> <span class="o">=</span> <span class="n">SyncQueue</span><span class="p">()</span>
     <span class="n">_stop</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
@@ -318,7 +320,9 @@
 
         <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<div class="viewcode-block" id="StatusInfoReader.open"><a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.open">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StatusInfoReader.open">
+<a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.open">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_bt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_timestamp</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">=</span> <span class="mi">0</span>
@@ -326,28 +330,40 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="StatusInfoReader.read"><a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.read">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StatusInfoReader.read">
+<a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.read">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns one data item</span>
 
 <span class="sd">        :return: (index, timestamp, character)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">popleft_no_block</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="StatusInfoReader.close"><a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.close">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StatusInfoReader.close">
+<a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;bt&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bt</span><span class="p">}</span>
 
-<div class="viewcode-block" id="StatusInfoReader.key"><a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.key">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComparableType</span><span class="p">:</span>
+<div class="viewcode-block" id="StatusInfoReader.key">
+<a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.key">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComparableType</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param data: (index, timestamp, character)</span>
 <span class="sd">        :return: index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">_ITEMGETTER_0</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="StatusInfoReader.run"><a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.run">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="StatusInfoReader.run">
+<a class="viewcode-back" href="../../module_docs/pchealthstream2py/pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.run">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
 
@@ -367,7 +383,9 @@
 
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">raise</span></div></div>
+            <span class="k">raise</span></div>
+</div>
+
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
