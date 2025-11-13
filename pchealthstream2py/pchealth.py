@@ -43,7 +43,7 @@ class StatusInfo:
 
         _t = -1
         try:
-            with open('/sys/class/thermal/thermal_zone0/temp', 'r') as ftemp:
+            with open('/sys/class/thermal/thermal_zone0/temp') as ftemp:
                 _t = ftemp.readline()
                 _t = float(int(_t) / 1000)
         except Exception as ex:
