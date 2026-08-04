@@ -10,6 +10,7 @@ import threading
 import time
 from collections import deque
 from pprint import pprint
+from typing import Optional
 
 import psutil
 import platform
@@ -114,7 +115,7 @@ class StatusInfo:
         return {'val': _values, 'unit': 'json'}
 
     @staticmethod
-    def network_download_speed() -> dict or None:
+    def network_download_speed() -> Optional[dict]:
         """
             Method to get download speed by testing real network speed.
             It requires speedtest python  system app to be installed.
@@ -221,11 +222,6 @@ class SyncQueue:
 
 
 class StatusInfoReader(SourceReader, threading.Thread):
-    _index: int = 0
-    _data: SyncQueue = SyncQueue()
-    _stop: threading.Event = threading.Event()
-    _bt: int = None
-
     def __init__(
         self,
         read_interval_ms=DFLT_STATUS_INFO_READ_INTERVAL,
@@ -233,18 +229,29 @@ class StatusInfoReader(SourceReader, threading.Thread):
         include_network_upload_speed: bool = False,
     ):
 
+        threading.Thread.__init__(self, daemon=True)
+
         self.read_interval_ms = read_interval_ms
         self.include_network_download_speed = include_network_download_speed
         self.include_network_upload_speed = include_network_upload_speed
 
-        threading.Thread.__init__(self, daemon=True)
+        # Per-instance state. These used to be *class* attributes, which meant
+        # every StatusInfoReader shared one queue and one stop flag.
+        self._index: int = 0
+        self._data: SyncQueue = SyncQueue()
+        self._bt: Optional[int] = None
+        # Deliberately NOT named `_stop`: `threading.Thread._stop` is a method
+        # CPython calls internally (from `_wait_for_tstate_lock`, reached via
+        # `join()` and `is_alive()`), so shadowing it with an Event breaks
+        # `join()` with "TypeError: 'Event' object is not callable".
+        self._stop_event: threading.Event = threading.Event()
 
     def open(self):
         self._data.clear()
         self._bt = self.get_timestamp()
         self._index = 0
 
-        self._stop.clear()
+        self._stop_event.clear()
         self.start()
 
     def read(self):
@@ -255,7 +262,7 @@ class StatusInfoReader(SourceReader, threading.Thread):
         return self._data.popleft_no_block()
 
     def close(self):
-        self._stop.set()
+        self._stop_event.set()
 
     @property
     def info(self) -> dict:
@@ -270,7 +277,7 @@ class StatusInfoReader(SourceReader, threading.Thread):
 
     def run(self):
         try:
-            while not self._stop.is_set():
+            while not self._stop_event.is_set():
 
                 self._data.append(
                     (
