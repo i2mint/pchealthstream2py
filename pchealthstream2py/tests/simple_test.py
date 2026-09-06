@@ -52,3 +52,54 @@ def test_stop_does_not_shadow_thread_internals():
         reader.close()
     reader.join(timeout=10)
     assert not reader.is_alive()
+
+
+def test_reader_can_be_reopened():
+    """A reader must be usable again after `close()`.
+
+    Regression test: `StatusInfoReader` is also a `threading.Thread`, and
+    `open()` used to call `self.start()` unconditionally, so the second
+    `open()` always raised "threads can only be started once" -- violating the
+    reuse contract that `SourceReader`'s own class docstring demonstrates.
+
+    The count assertion covers the other half of the bug: if `open()` restarts
+    without joining the previous worker, that worker is still sleeping when the
+    stop flag is cleared, so it never exits and each cycle adds another producer
+    to the same queue (counts drift 9 / 18 / 27 instead of holding at 9).
+    """
+    read_interval_ms = 50
+    reader = StatusInfoReader(read_interval_ms=read_interval_ms)
+
+    counts = []
+    for _ in range(3):
+        with reader:
+            time.sleep(10 * read_interval_ms / 1000)
+        counts.append(reader._data.len())
+
+    assert all(count > 0 for count in counts), counts
+    # One producer per cycle, not one more on every cycle. A leaked producer
+    # multiplies the count by the cycle number, so the ratio separates the bug
+    # from ordinary scheduling jitter.
+    assert max(counts) < 2 * min(counts), counts
+
+
+def test_reopen_does_not_leak_worker_threads():
+    """Reopening must leave exactly one live worker, not one more each time.
+
+    The timing-free half of `test_reader_can_be_reopened`: it inspects the
+    worker threads themselves rather than how much they produced.
+    """
+    reader = StatusInfoReader(read_interval_ms=50)
+    workers = []
+
+    for _ in range(3):
+        with reader:
+            time.sleep(0.2)
+            workers.append(reader._worker)
+            # Only the newest worker runs; `open()` joined the earlier ones.
+            expected = [False] * (len(workers) - 1) + [True]
+            assert [worker.is_alive() for worker in workers] == expected
+
+    for worker in workers:
+        worker.join(timeout=10)
+        assert not worker.is_alive()
