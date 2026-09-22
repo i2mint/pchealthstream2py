@@ -447,162 +447,167 @@
 </span><span id="line-280"><span class="sd">        stop, leaving two threads appending to the same queue.</span>
 </span><span id="line-281"><span class="sd">        """</span>
 </span><span id="line-282">        <span class="n">worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span>
-</span><span id="line-283">        <span class="k">if</span> <span class="n">worker</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">worker</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-</span><span id="line-284">            <span class="k">return</span>
-</span><span id="line-285">
-</span><span id="line-286">        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
-</span><span id="line-287">        <span class="n">worker</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reopen_timeout_s</span><span class="p">)</span>
-</span><span id="line-288">        <span class="k">if</span> <span class="n">worker</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
-</span><span id="line-289">            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
-</span><span id="line-290">                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.open(): the worker thread of the previous"</span>
-</span><span id="line-291">                <span class="sa">f</span><span class="s2">" run did not stop within reopen_timeout_s=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reopen_timeout_s</span><span class="si">}</span><span class="s2">"</span>
-</span><span id="line-292">                <span class="sa">f</span><span class="s2">" seconds, so a new one can't be started without ending up with"</span>
-</span><span id="line-293">                <span class="sa">f</span><span class="s2">" two producers feeding the same queue. Give the reader a longer"</span>
-</span><span id="line-294">                <span class="sa">f</span><span class="s2">" reopen_timeout_s (or None to wait for as long as it takes)."</span>
-</span><span id="line-295">            <span class="p">)</span>
-</span><span id="line-296">
-</span><span id="line-297">    <span class="k">def</span><span class="w"> </span><span class="nf">_start_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-298"><span class="w">        </span><span class="sd">"""Run `run` in a fresh daemon thread: one per `open()`.</span>
-</span><span id="line-299">
-</span><span id="line-300"><span class="sd">        A `threading.Thread` can only be started once, so a reusable reader</span>
-</span><span id="line-301"><span class="sd">        can't run its work in `self` -- not even the first time, or `self` would</span>
-</span><span id="line-302"><span class="sd">        be a finished thread standing in for the reader from the second `open()`</span>
-</span><span id="line-303"><span class="sd">        on. `is_alive()` and `join()` are overridden to follow the current</span>
-</span><span id="line-304"><span class="sd">        worker, so they keep meaning "is it reading" and "wait for it to stop".</span>
-</span><span id="line-305"><span class="sd">        """</span>
-</span><span id="line-306">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
-</span><span id="line-307">            <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-worker"</span>
-</span><span id="line-308">        <span class="p">)</span>
-</span><span id="line-309">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span id="line-310">
-</span><span id="line-311">    <span class="k">def</span><span class="w"> </span><span class="nf">_current_worker_is_another_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="line-312">        <span class="n">worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span>
-</span><span id="line-313">        <span class="k">return</span> <span class="n">worker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">worker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span>
-</span><span id="line-314">
+</span><span id="line-283">        <span class="k">if</span> <span class="n">worker</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="n">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-284">            <span class="c1"># Started the legacy way (`start()`, so running in `self`) and then</span>
+</span><span id="line-285">            <span class="c1"># `open()`ed: that run must stop too, or it would miss the stop flag</span>
+</span><span id="line-286">            <span class="c1"># `open()` clears below and keep feeding the queue next to the new one.</span>
+</span><span id="line-287">            <span class="n">worker</span> <span class="o">=</span> <span class="bp">self</span>
+</span><span id="line-288">        <span class="k">if</span> <span class="n">worker</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">worker</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+</span><span id="line-289">            <span class="k">return</span>
+</span><span id="line-290">
+</span><span id="line-291">        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+</span><span id="line-292">        <span class="n">worker</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reopen_timeout_s</span><span class="p">)</span>
+</span><span id="line-293">        <span class="k">if</span> <span class="n">worker</span><span class="o">.</span><span class="n">is_alive</span><span class="p">():</span>
+</span><span id="line-294">            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+</span><span id="line-295">                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.open(): the worker thread of the previous"</span>
+</span><span id="line-296">                <span class="sa">f</span><span class="s2">" run did not stop within reopen_timeout_s=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reopen_timeout_s</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="line-297">                <span class="sa">f</span><span class="s2">" seconds, so a new one can't be started without ending up with"</span>
+</span><span id="line-298">                <span class="sa">f</span><span class="s2">" two producers feeding the same queue. Give the reader a longer"</span>
+</span><span id="line-299">                <span class="sa">f</span><span class="s2">" reopen_timeout_s (or None to wait for as long as it takes)."</span>
+</span><span id="line-300">            <span class="p">)</span>
+</span><span id="line-301">
+</span><span id="line-302">    <span class="k">def</span><span class="w"> </span><span class="nf">_start_worker</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-303"><span class="w">        </span><span class="sd">"""Run `run` in a fresh daemon thread: one per `open()`.</span>
+</span><span id="line-304">
+</span><span id="line-305"><span class="sd">        A `threading.Thread` can only be started once, so a reusable reader</span>
+</span><span id="line-306"><span class="sd">        can't run its work in `self` -- not even the first time, or `self` would</span>
+</span><span id="line-307"><span class="sd">        be a finished thread standing in for the reader from the second `open()`</span>
+</span><span id="line-308"><span class="sd">        on. `is_alive()` and `join()` are overridden to follow the current</span>
+</span><span id="line-309"><span class="sd">        worker, so they keep meaning "is it reading" and "wait for it to stop".</span>
+</span><span id="line-310"><span class="sd">        """</span>
+</span><span id="line-311">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+</span><span id="line-312">            <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-worker"</span>
+</span><span id="line-313">        <span class="p">)</span>
+</span><span id="line-314">        <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span id="line-315">
+</span><span id="line-316">    <span class="k">def</span><span class="w"> </span><span class="nf">_current_worker_is_another_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="line-317">        <span class="n">worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span>
+</span><span id="line-318">        <span class="k">return</span> <span class="n">worker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">worker</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">self</span>
+</span><span id="line-319">
 <div class="viewcode-block" id="StatusInfoReader.is_alive">
 <a class="viewcode-back" href="../../_autosummary/pchealthstream2py.pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.is_alive">[docs]</a>
-</span><span id="line-315">    <span class="k">def</span><span class="w"> </span><span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-</span><span id="line-316"><span class="w">        </span><span class="sd">"""Whether the reader is currently reading, whichever thread is doing it.</span>
-</span><span id="line-317">
-</span><span id="line-318"><span class="sd">        The work runs in a per-`open()` worker thread (see `_start_worker`), not</span>
-</span><span id="line-319"><span class="sd">        in `self`, so the inherited `Thread.is_alive` would describe the wrong</span>
-</span><span id="line-320"><span class="sd">        thread. (A reader started the legacy way, with `start()` rather than</span>
-</span><span id="line-321"><span class="sd">        `open()`, has no worker and answers for `self` as before.)</span>
-</span><span id="line-322"><span class="sd">        """</span>
-</span><span id="line-323">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_worker_is_another_thread</span><span class="p">():</span>
-</span><span id="line-324">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span>
-</span><span id="line-325">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span></div>
+</span><span id="line-320">    <span class="k">def</span><span class="w"> </span><span class="nf">is_alive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+</span><span id="line-321"><span class="w">        </span><span class="sd">"""Whether the reader is currently reading, whichever thread is doing it.</span>
+</span><span id="line-322">
+</span><span id="line-323"><span class="sd">        The work runs in a per-`open()` worker thread (see `_start_worker`), not</span>
+</span><span id="line-324"><span class="sd">        in `self`, so the inherited `Thread.is_alive` would describe the wrong</span>
+</span><span id="line-325"><span class="sd">        thread. (A reader started the legacy way, with `start()` rather than</span>
+</span><span id="line-326"><span class="sd">        `open()`, has no worker and answers for `self` as before.)</span>
+</span><span id="line-327"><span class="sd">        """</span>
+</span><span id="line-328">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_worker_is_another_thread</span><span class="p">():</span>
+</span><span id="line-329">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span>
+</span><span id="line-330">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">is_alive</span><span class="p">()</span></div>
 
-</span><span id="line-326">
+</span><span id="line-331">
 <div class="viewcode-block" id="StatusInfoReader.join">
 <a class="viewcode-back" href="../../_autosummary/pchealthstream2py.pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.join">[docs]</a>
-</span><span id="line-327">    <span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-328"><span class="w">        </span><span class="sd">"""Wait for the current run's worker thread to finish (see `is_alive`)."""</span>
-</span><span id="line-329">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_worker_is_another_thread</span><span class="p">():</span>
-</span><span id="line-330">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
-</span><span id="line-331">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span></div>
+</span><span id="line-332">    <span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-333"><span class="w">        </span><span class="sd">"""Wait for the current run's worker thread to finish (see `is_alive`)."""</span>
+</span><span id="line-334">        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_worker_is_another_thread</span><span class="p">():</span>
+</span><span id="line-335">            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_worker</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span>
+</span><span id="line-336">        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">timeout</span><span class="p">)</span></div>
 
-</span><span id="line-332">
+</span><span id="line-337">
 <div class="viewcode-block" id="StatusInfoReader.read">
 <a class="viewcode-back" href="../../_autosummary/pchealthstream2py.pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.read">[docs]</a>
-</span><span id="line-333">    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-334"><span class="w">        </span><span class="sd">"""Returns one data item</span>
-</span><span id="line-335">
-</span><span id="line-336"><span class="sd">        :return: (index, timestamp, character)</span>
-</span><span id="line-337"><span class="sd">        """</span>
-</span><span id="line-338">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">popleft_no_block</span><span class="p">()</span></div>
+</span><span id="line-338">    <span class="k">def</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-339"><span class="w">        </span><span class="sd">"""Returns one data item</span>
+</span><span id="line-340">
+</span><span id="line-341"><span class="sd">        :return: (index, timestamp, character)</span>
+</span><span id="line-342"><span class="sd">        """</span>
+</span><span id="line-343">        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">popleft_no_block</span><span class="p">()</span></div>
 
-</span><span id="line-339">
+</span><span id="line-344">
 <div class="viewcode-block" id="StatusInfoReader.close">
 <a class="viewcode-back" href="../../_autosummary/pchealthstream2py.pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.close">[docs]</a>
-</span><span id="line-340">    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-341">        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
+</span><span id="line-345">    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-346">        <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span></div>
 
-</span><span id="line-342">
-</span><span id="line-343">    <span class="nd">@property</span>
-</span><span id="line-344">    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-</span><span id="line-345">        <span class="k">return</span> <span class="p">{</span><span class="s2">"bt"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bt</span><span class="p">}</span>
-</span><span id="line-346">
+</span><span id="line-347">
+</span><span id="line-348">    <span class="nd">@property</span>
+</span><span id="line-349">    <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+</span><span id="line-350">        <span class="k">return</span> <span class="p">{</span><span class="s2">"bt"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bt</span><span class="p">}</span>
+</span><span id="line-351">
 <div class="viewcode-block" id="StatusInfoReader.key">
 <a class="viewcode-back" href="../../_autosummary/pchealthstream2py.pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.key">[docs]</a>
-</span><span id="line-347">    <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComparableType</span><span class="p">:</span>
-</span><span id="line-348"><span class="w">        </span><span class="sd">"""</span>
-</span><span id="line-349"><span class="sd">        :param data: (index, timestamp, character)</span>
-</span><span id="line-350"><span class="sd">        :return: index</span>
-</span><span id="line-351"><span class="sd">        """</span>
-</span><span id="line-352">        <span class="k">return</span> <span class="n">_ITEMGETTER_0</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
+</span><span id="line-352">    <span class="k">def</span><span class="w"> </span><span class="nf">key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComparableType</span><span class="p">:</span>
+</span><span id="line-353"><span class="w">        </span><span class="sd">"""</span>
+</span><span id="line-354"><span class="sd">        :param data: (index, timestamp, character)</span>
+</span><span id="line-355"><span class="sd">        :return: index</span>
+</span><span id="line-356"><span class="sd">        """</span>
+</span><span id="line-357">        <span class="k">return</span> <span class="n">_ITEMGETTER_0</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div>
 
-</span><span id="line-353">
+</span><span id="line-358">
 <div class="viewcode-block" id="StatusInfoReader.run">
 <a class="viewcode-back" href="../../_autosummary/pchealthstream2py.pchealth.html#pchealthstream2py.pchealth.StatusInfoReader.run">[docs]</a>
-</span><span id="line-354">    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span id="line-355">        <span class="k">try</span><span class="p">:</span>
-</span><span id="line-356">            <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
-</span><span id="line-357">                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-</span><span id="line-358">                    <span class="p">(</span>
-</span><span id="line-359">                        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span>
-</span><span id="line-360">                        <span class="bp">self</span><span class="o">.</span><span class="n">get_timestamp</span><span class="p">(),</span>
-</span><span id="line-361">                        <span class="n">StatusInfo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
-</span><span id="line-362">                            <span class="bp">self</span><span class="o">.</span><span class="n">include_network_download_speed</span><span class="p">,</span>
-</span><span id="line-363">                            <span class="bp">self</span><span class="o">.</span><span class="n">include_network_upload_speed</span><span class="p">,</span>
-</span><span id="line-364">                        <span class="p">),</span>
-</span><span id="line-365">                    <span class="p">)</span>
-</span><span id="line-366">                <span class="p">)</span>  <span class="c1"># (index, timestamp, character)</span>
-</span><span id="line-367">                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">+=</span> <span class="mi">1</span>
-</span><span id="line-368">                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_interval_ms</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-</span><span id="line-369">                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_interval_ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
-</span><span id="line-370">
-</span><span id="line-371">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-</span><span id="line-372">            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</span><span id="line-373">            <span class="k">raise</span></div>
+</span><span id="line-359">    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span id="line-360">        <span class="k">try</span><span class="p">:</span>
+</span><span id="line-361">            <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+</span><span id="line-362">                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+</span><span id="line-363">                    <span class="p">(</span>
+</span><span id="line-364">                        <span class="bp">self</span><span class="o">.</span><span class="n">_index</span><span class="p">,</span>
+</span><span id="line-365">                        <span class="bp">self</span><span class="o">.</span><span class="n">get_timestamp</span><span class="p">(),</span>
+</span><span id="line-366">                        <span class="n">StatusInfo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+</span><span id="line-367">                            <span class="bp">self</span><span class="o">.</span><span class="n">include_network_download_speed</span><span class="p">,</span>
+</span><span id="line-368">                            <span class="bp">self</span><span class="o">.</span><span class="n">include_network_upload_speed</span><span class="p">,</span>
+</span><span id="line-369">                        <span class="p">),</span>
+</span><span id="line-370">                    <span class="p">)</span>
+</span><span id="line-371">                <span class="p">)</span>  <span class="c1"># (index, timestamp, character)</span>
+</span><span id="line-372">                <span class="bp">self</span><span class="o">.</span><span class="n">_index</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="line-373">                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">read_interval_ms</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="line-374">                    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">read_interval_ms</span> <span class="o">/</span> <span class="mi">1000</span><span class="p">)</span>
+</span><span id="line-375">
+</span><span id="line-376">        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+</span><span id="line-377">            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</span><span id="line-378">            <span class="k">raise</span></div>
 </div>
 
-</span><span id="line-374">
-</span><span id="line-375">
-</span><span id="line-376"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-</span><span id="line-377">    <span class="k">with</span> <span class="n">StatusInfoReader</span><span class="p">()</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
-</span><span id="line-378">        <span class="nb">print</span><span class="p">(</span><span class="s2">"Ctrl+C to exit"</span><span class="p">)</span>
-</span><span id="line-379">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-</span><span id="line-380">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="line-381">            <span class="k">try</span><span class="p">:</span>
-</span><span id="line-382">                <span class="n">data</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-</span><span id="line-383">                <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="line-384">                    <span class="n">index</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">data</span>
-</span><span id="line-385">                    <span class="n">pprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</span><span id="line-386">
-</span><span id="line-387">            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">kb</span><span class="p">:</span>
-</span><span id="line-388">                <span class="k">break</span>
-</span><span id="line-389">
-</span><span id="line-390">    <span class="nb">print</span><span class="p">(</span><span class="s2">"Done!"</span><span class="p">)</span>
+</span><span id="line-379">
+</span><span id="line-380">
+</span><span id="line-381"><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span id="line-382">    <span class="k">with</span> <span class="n">StatusInfoReader</span><span class="p">()</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+</span><span id="line-383">        <span class="nb">print</span><span class="p">(</span><span class="s2">"Ctrl+C to exit"</span><span class="p">)</span>
+</span><span id="line-384">        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</span><span id="line-385">        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="line-386">            <span class="k">try</span><span class="p">:</span>
+</span><span id="line-387">                <span class="n">data</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+</span><span id="line-388">                <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="line-389">                    <span class="n">index</span><span class="p">,</span> <span class="n">timestamp</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">data</span>
+</span><span id="line-390">                    <span class="n">pprint</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">info</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </span><span id="line-391">
-</span><span id="line-392">
-</span><span id="line-393"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
-</span><span id="line-394">    <span class="n">main</span><span class="p">()</span>
-</span><span id="line-395">    <span class="c1"># As separated info</span>
-</span><span id="line-396">    <span class="c1"># print(f"Memory:\n---------------------------------")</span>
-</span><span id="line-397">    <span class="c1"># print(f"\tmem total {StatusInfo.mem_total()}")</span>
-</span><span id="line-398">    <span class="c1"># print(f"\tmem available {StatusInfo.mem_available()}")</span>
-</span><span id="line-399">    <span class="c1"># print(f"\tmem free {StatusInfo.mem_free()}")</span>
-</span><span id="line-400">    <span class="c1"># print(f"\tmem used bytes {StatusInfo.mem_used_bytes()}")</span>
-</span><span id="line-401">    <span class="c1"># print(f"\tmem used percents {StatusInfo.mem_used_percent()}")</span>
-</span><span id="line-402">    <span class="c1">#</span>
-</span><span id="line-403">    <span class="c1"># print(f"\nDisk:\n---------------------------------")</span>
-</span><span id="line-404">    <span class="c1"># print(f"\tdisk free {StatusInfo.disk_free_bytes()}")</span>
-</span><span id="line-405">    <span class="c1"># print(f"\tdisk used {StatusInfo.disk_used_percents()}")</span>
-</span><span id="line-406">    <span class="c1">#</span>
-</span><span id="line-407">    <span class="c1"># print(f"\nCPU:\n---------------------------------")</span>
-</span><span id="line-408">    <span class="c1"># print(f"\tcpu used {StatusInfo.cpu_used_percents()}")</span>
-</span><span id="line-409">    <span class="c1"># print(f"\tcpu temp {StatusInfo.cpu_temp()}")</span>
-</span><span id="line-410">    <span class="c1">#</span>
-</span><span id="line-411">    <span class="c1"># print(f"\nPlatform:\n---------------------------------")</span>
-</span><span id="line-412">    <span class="c1"># print(f"\tplatform info {StatusInfo.platform()}")</span>
-</span><span id="line-413">    <span class="c1">#</span>
-</span><span id="line-414">    <span class="c1"># print(f"\nNetwork:\n---------------------------------")</span>
-</span><span id="line-415">    <span class="c1"># print(f"\tDownload speed {StatusInfo.network_download_speed()}")</span>
-</span><span id="line-416">    <span class="c1"># print(f"\tUpload speed {StatusInfo.network_upload_speed()}")</span>
-</span><span id="line-417">
-</span><span id="line-418">    <span class="c1"># or as a single JSON</span>
-</span><span id="line-419">    <span class="c1"># print(StatusInfo.all(include_network_download_speed=True, include_network_upload_speed=True))</span>
+</span><span id="line-392">            <span class="k">except</span> <span class="ne">KeyboardInterrupt</span> <span class="k">as</span> <span class="n">kb</span><span class="p">:</span>
+</span><span id="line-393">                <span class="k">break</span>
+</span><span id="line-394">
+</span><span id="line-395">    <span class="nb">print</span><span class="p">(</span><span class="s2">"Done!"</span><span class="p">)</span>
+</span><span id="line-396">
+</span><span id="line-397">
+</span><span id="line-398"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+</span><span id="line-399">    <span class="n">main</span><span class="p">()</span>
+</span><span id="line-400">    <span class="c1"># As separated info</span>
+</span><span id="line-401">    <span class="c1"># print(f"Memory:\n---------------------------------")</span>
+</span><span id="line-402">    <span class="c1"># print(f"\tmem total {StatusInfo.mem_total()}")</span>
+</span><span id="line-403">    <span class="c1"># print(f"\tmem available {StatusInfo.mem_available()}")</span>
+</span><span id="line-404">    <span class="c1"># print(f"\tmem free {StatusInfo.mem_free()}")</span>
+</span><span id="line-405">    <span class="c1"># print(f"\tmem used bytes {StatusInfo.mem_used_bytes()}")</span>
+</span><span id="line-406">    <span class="c1"># print(f"\tmem used percents {StatusInfo.mem_used_percent()}")</span>
+</span><span id="line-407">    <span class="c1">#</span>
+</span><span id="line-408">    <span class="c1"># print(f"\nDisk:\n---------------------------------")</span>
+</span><span id="line-409">    <span class="c1"># print(f"\tdisk free {StatusInfo.disk_free_bytes()}")</span>
+</span><span id="line-410">    <span class="c1"># print(f"\tdisk used {StatusInfo.disk_used_percents()}")</span>
+</span><span id="line-411">    <span class="c1">#</span>
+</span><span id="line-412">    <span class="c1"># print(f"\nCPU:\n---------------------------------")</span>
+</span><span id="line-413">    <span class="c1"># print(f"\tcpu used {StatusInfo.cpu_used_percents()}")</span>
+</span><span id="line-414">    <span class="c1"># print(f"\tcpu temp {StatusInfo.cpu_temp()}")</span>
+</span><span id="line-415">    <span class="c1">#</span>
+</span><span id="line-416">    <span class="c1"># print(f"\nPlatform:\n---------------------------------")</span>
+</span><span id="line-417">    <span class="c1"># print(f"\tplatform info {StatusInfo.platform()}")</span>
+</span><span id="line-418">    <span class="c1">#</span>
+</span><span id="line-419">    <span class="c1"># print(f"\nNetwork:\n---------------------------------")</span>
+</span><span id="line-420">    <span class="c1"># print(f"\tDownload speed {StatusInfo.network_download_speed()}")</span>
+</span><span id="line-421">    <span class="c1"># print(f"\tUpload speed {StatusInfo.network_upload_speed()}")</span>
+</span><span id="line-422">
+</span><span id="line-423">    <span class="c1"># or as a single JSON</span>
+</span><span id="line-424">    <span class="c1"># print(StatusInfo.all(include_network_download_speed=True, include_network_upload_speed=True))</span>
 </span></code></pre></div>
     </div></div>
           </main>
@@ -616,7 +621,7 @@
 </footer>
     </div>
     
-    <script src="../../_static/documentation_options.js?v=59fadc99"></script>
+    <script src="../../_static/documentation_options.js?v=6e0256f3"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>

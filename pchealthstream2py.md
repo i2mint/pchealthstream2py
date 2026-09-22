@@ -1,4 +1,4 @@
-> built 2026-09-22 14:21 UTC from 6e9b935 (master) · pchealthstream2py 0.1.5. Details: build_info.json
+> built 2026-09-22 15:07 UTC from ebb6f7f (master) · pchealthstream2py 0.1.6. Details: build_info.json
 
 # index.html.md
 
@@ -120,18 +120,18 @@ from the args and kwargs arguments, respectively.
 
 # About this build
 
-This documentation was built on **2026-09-22 14:21 UTC** from commit <a href="https://github.com/i2mint/pchealthstream2py/commit/6e9b935a6fff43368f2a8200ffe14c0f2fa71a52"><code>6e9b935</code></a> on branch <code>master</code>, for **pchealthstream2py 0.1.5** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-09-22 15:07 UTC** from commit <a href="https://github.com/i2mint/pchealthstream2py/commit/ebb6f7f3258b0a6523f1d4fbdd332913b208a67a"><code>ebb6f7f</code></a> on branch <code>master</code>, for **pchealthstream2py 0.1.6** (from <code>pyproject.toml</code>).
 
 #### WARNING
 The documentation and the package may be misaligned:
 
-- The documented version (0.1.5) is behind the latest release on PyPI (0.1.6): `pip install pchealthstream2py` gives newer code than these docs describe.
+- The documented version (0.1.6) is behind the latest release on PyPI (0.1.7): `pip install pchealthstream2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                                 |
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/pchealthstream2py/commit/6e9b935a6fff43368f2a8200ffe14c0f2fa71a52"><code>6e9b935a6fff43368f2a8200ffe14c0f2fa71a52</code></a> |
+| Commit              | <a href="https://github.com/i2mint/pchealthstream2py/commit/ebb6f7f3258b0a6523f1d4fbdd332913b208a67a"><code>ebb6f7f3258b0a6523f1d4fbdd332913b208a67a</code></a> |
 | Branch              | <code>master</code>                                                                                                                                             |
 | Tags at this commit | none                                                                                                                                                            |
 | Working tree        | clean                                                                                                                                                           |
@@ -142,9 +142,9 @@ The documentation and the package may be misaligned:
 |              |                                                                                                |
 |--------------|------------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/pchealthstream2py</code>                                                          |
-| Run          | <a href="https://github.com/i2mint/pchealthstream2py/actions/runs/35739523190">35739523190</a> |
+| Run          | <a href="https://github.com/i2mint/pchealthstream2py/actions/runs/35744921592">35744921592</a> |
 | Ref          | <code>refs/heads/master</code>                                                                 |
-| Event commit | <code>6e9b935a6fff43368f2a8200ffe14c0f2fa71a52</code> (in the history of the built commit)     |
+| Event commit | <code>ebb6f7f3258b0a6523f1d4fbdd332913b208a67a</code> (in the history of the built commit)     |
 
 ## Tools
 
@@ -169,13 +169,13 @@ The documentation and the package may be misaligned:
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/pchealthstream2py/0.1.6/">0.1.6</a>, newer than the documented version (0.1.5).
+Latest release: <a href="https://pypi.org/project/pchealthstream2py/0.1.7/">0.1.7</a>, newer than the documented version (0.1.6).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/pchealthstream2py && cd pchealthstream2py
-git checkout 6e9b935a6fff43368f2a8200ffe14c0f2fa71a52
+git checkout ebb6f7f3258b0a6523f1d4fbdd332913b208a67a
 pip install "epythet==0.2.12"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```
