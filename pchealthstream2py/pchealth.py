@@ -252,7 +252,7 @@ class StatusInfoReader(SourceReader, threading.Thread):
         # `join()` with "TypeError: 'Event' object is not callable".
         self._stop_event: threading.Event = threading.Event()
         # The thread currently running `run`, or None while the reader has never
-        # been opened. It is `self` for the first run (see `_start_worker`).
+        # been opened (see `_start_worker`).
         self._worker: Optional[threading.Thread] = None
 
     def open(self):
@@ -295,21 +295,40 @@ class StatusInfoReader(SourceReader, threading.Thread):
             )
 
     def _start_worker(self):
-        """Run `run` in a daemon thread, reusing `self` for the very first run.
+        """Run `run` in a fresh daemon thread: one per `open()`.
 
-        A `threading.Thread` can only be started once, so from the second
-        `open()` on the work has to go in a fresh thread. The first `open()`
-        still starts `self`, which keeps `is_alive()`, `join()` and the rest of
-        the inherited `Thread` API behaving exactly as they always have.
+        A `threading.Thread` can only be started once, so a reusable reader
+        can't run its work in `self` -- not even the first time, or `self` would
+        be a finished thread standing in for the reader from the second `open()`
+        on. `is_alive()` and `join()` are overridden to follow the current
+        worker, so they keep meaning "is it reading" and "wait for it to stop".
         """
-        if self._worker is None:
-            self._worker = self
-            self.start()
-        else:
-            self._worker = threading.Thread(
-                target=self.run, daemon=True, name=f"{self.name}-worker"
-            )
-            self._worker.start()
+        self._worker = threading.Thread(
+            target=self.run, daemon=True, name=f"{self.name}-worker"
+        )
+        self._worker.start()
+
+    def _current_worker_is_another_thread(self) -> bool:
+        worker = self._worker
+        return worker is not None and worker is not self
+
+    def is_alive(self) -> bool:
+        """Whether the reader is currently reading, whichever thread is doing it.
+
+        The work runs in a per-`open()` worker thread (see `_start_worker`), not
+        in `self`, so the inherited `Thread.is_alive` would describe the wrong
+        thread. (A reader started the legacy way, with `start()` rather than
+        `open()`, has no worker and answers for `self` as before.)
+        """
+        if self._current_worker_is_another_thread():
+            return self._worker.is_alive()
+        return super().is_alive()
+
+    def join(self, timeout: Optional[float] = None) -> None:
+        """Wait for the current run's worker thread to finish (see `is_alive`)."""
+        if self._current_worker_is_another_thread():
+            return self._worker.join(timeout)
+        return super().join(timeout)
 
     def read(self):
         """Returns one data item
