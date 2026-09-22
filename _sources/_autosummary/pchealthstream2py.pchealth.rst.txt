@@ -1,0 +1,13 @@
+pchealthstream2py.pchealth
+==========================
+
+.. automodule:: pchealthstream2py.pchealth
+
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      StatusInfo
+      StatusInfoReader
+   

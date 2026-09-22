@@ -1,0 +1,13 @@
+# pchealthstream2py
+
+> stream2py interface to pc health
+
+
+## Pages in this subsection
+
+- [pchealthstream2py](pchealthstream2py.html.md): Getting streams of PC stats
+- [pchealthstream2py.pchealth](pchealthstream2py.pchealth.html.md): Provide computer status info.
+
+## Optional
+
+- [Top-level llms.txt](../llms.txt): Complete documentation index.
