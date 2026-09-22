@@ -1,4 +1,4 @@
-> built 2026-09-22 12:59 UTC from c572dba (master) · pchealthstream2py 0.1.4. Details: build_info.json
+> built 2026-09-22 14:21 UTC from 6e9b935 (master) · pchealthstream2py 0.1.5. Details: build_info.json
 
 # index.html.md
 
@@ -60,6 +60,25 @@ should be included with read data instead.
 * **Returns:**
   dict
 
+#### is_alive()
+
+Whether the reader is currently reading, whichever thread is doing it.
+
+The work runs in a per-`open()` worker thread (see `_start_worker`), not
+in `self`, so the inherited `Thread.is_alive` would describe the wrong
+thread. (A reader started the legacy way, with `start()` rather than
+`open()`, has no worker and answers for `self` as before.)
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+#### join(timeout=None)
+
+Wait for the current run’s worker thread to finish (see `is_alive`).
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 #### key(data)
 
 * **Parameters:**
@@ -101,16 +120,18 @@ from the args and kwargs arguments, respectively.
 
 # About this build
 
-This documentation was built on **2026-09-22 12:59 UTC** from commit <a href="https://github.com/i2mint/pchealthstream2py/commit/c572dbab03333d54e4252b89aed15bce12c9c132"><code>c572dba</code></a> on branch <code>master</code>, for **pchealthstream2py 0.1.4** (from <code>pyproject.toml</code>).
+This documentation was built on **2026-09-22 14:21 UTC** from commit <a href="https://github.com/i2mint/pchealthstream2py/commit/6e9b935a6fff43368f2a8200ffe14c0f2fa71a52"><code>6e9b935</code></a> on branch <code>master</code>, for **pchealthstream2py 0.1.5** (from <code>pyproject.toml</code>).
 
-#### NOTE
-Nothing suggests a mismatch: the tree was clean at the commit above, and the documented version is the one on PyPI.
+#### WARNING
+The documentation and the package may be misaligned:
+
+- The documented version (0.1.5) is behind the latest release on PyPI (0.1.6): `pip install pchealthstream2py` gives newer code than these docs describe.
 
 ## Source
 
 |                     |                                                                                                                                                                 |
 |---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Commit              | <a href="https://github.com/i2mint/pchealthstream2py/commit/c572dbab03333d54e4252b89aed15bce12c9c132"><code>c572dbab03333d54e4252b89aed15bce12c9c132</code></a> |
+| Commit              | <a href="https://github.com/i2mint/pchealthstream2py/commit/6e9b935a6fff43368f2a8200ffe14c0f2fa71a52"><code>6e9b935a6fff43368f2a8200ffe14c0f2fa71a52</code></a> |
 | Branch              | <code>master</code>                                                                                                                                             |
 | Tags at this commit | none                                                                                                                                                            |
 | Working tree        | clean                                                                                                                                                           |
@@ -121,9 +142,9 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 |              |                                                                                                |
 |--------------|------------------------------------------------------------------------------------------------|
 | Repository   | <code>i2mint/pchealthstream2py</code>                                                          |
-| Run          | <a href="https://github.com/i2mint/pchealthstream2py/actions/runs/35730413053">35730413053</a> |
+| Run          | <a href="https://github.com/i2mint/pchealthstream2py/actions/runs/35739523190">35739523190</a> |
 | Ref          | <code>refs/heads/master</code>                                                                 |
-| Event commit | <code>c572dbab03333d54e4252b89aed15bce12c9c132</code> (in the history of the built commit)     |
+| Event commit | <code>6e9b935a6fff43368f2a8200ffe14c0f2fa71a52</code> (in the history of the built commit)     |
 
 ## Tools
 
@@ -148,13 +169,13 @@ Nothing suggests a mismatch: the tree was clean at the commit above, and the doc
 
 ## Package on PyPI
 
-Latest release: <a href="https://pypi.org/project/pchealthstream2py/0.1.4/">0.1.4</a>, the same as the documented version.
+Latest release: <a href="https://pypi.org/project/pchealthstream2py/0.1.6/">0.1.6</a>, newer than the documented version (0.1.5).
 
 ## Reproduce
 
 ```bash
 git clone https://github.com/i2mint/pchealthstream2py && cd pchealthstream2py
-git checkout c572dbab03333d54e4252b89aed15bce12c9c132
+git checkout 6e9b935a6fff43368f2a8200ffe14c0f2fa71a52
 pip install "epythet==0.2.12"
 epythet quickstart . --ignore tests/ scrap/ examples/
 ```

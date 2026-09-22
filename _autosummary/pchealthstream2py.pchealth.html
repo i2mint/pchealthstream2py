@@ -153,6 +153,30 @@ should be included with read data instead.</p>
 </dl>
 </dd></dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="pchealthstream2py.pchealth.StatusInfoReader.is_alive">
+<span class="sig-name descname"><span class="pre">is_alive</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pchealthstream2py/pchealth.html#StatusInfoReader.is_alive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pchealthstream2py.pchealth.StatusInfoReader.is_alive" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pchealthstream2py.pchealth.StatusInfoReader.is_alive'">¶</a></dt>
+<dd><p>Whether the reader is currently reading, whichever thread is doing it.</p>
+<p>The work runs in a per-<code class="code docutils literal notranslate"><span class="pre">open()</span></code> worker thread (see <code class="code docutils literal notranslate"><span class="pre">_start_worker</span></code>), not
+in <code class="code docutils literal notranslate"><span class="pre">self</span></code>, so the inherited <code class="code docutils literal notranslate"><span class="pre">Thread.is_alive</span></code> would describe the wrong
+thread. (A reader started the legacy way, with <code class="code docutils literal notranslate"><span class="pre">start()</span></code> rather than
+<code class="code docutils literal notranslate"><span class="pre">open()</span></code>, has no worker and answers for <code class="code docutils literal notranslate"><span class="pre">self</span></code> as before.)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pchealthstream2py.pchealth.StatusInfoReader.join">
+<span class="sig-name descname"><span class="pre">join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pchealthstream2py/pchealth.html#StatusInfoReader.join"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pchealthstream2py.pchealth.StatusInfoReader.join" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pchealthstream2py.pchealth.StatusInfoReader.join'">¶</a></dt>
+<dd><p>Wait for the current run’s worker thread to finish (see <code class="code docutils literal notranslate"><span class="pre">is_alive</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" rel="nofollow noopener" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code><svg fill="currentColor" height="1em" stroke="none" viewbox="0 96 960 960" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M188 868q-11-11-11-28t11-28l436-436H400q-17 0-28.5-11.5T360 336q0-17 11.5-28.5T400 296h320q17 0 28.5 11.5T760 336v320q0 17-11.5 28.5T720 696q-17 0-28.5-11.5T680 656V432L244 868q-11 11-28 11t-28-11Z"></path></svg></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+<dl class="py method">
 <dt class="sig sig-object py" id="pchealthstream2py.pchealth.StatusInfoReader.key">
 <span class="sig-name descname"><span class="pre">key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pchealthstream2py/pchealth.html#StatusInfoReader.key"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a @click.prevent="window.navigator.clipboard.writeText($el.href); $el.setAttribute('data-tooltip', 'Copied!'); setTimeout(() =&gt; $el.setAttribute('data-tooltip', 'Copy link to this element'), 2000)" aria-label="Copy link to this element" class="headerlink" data-tooltip="Copy link to this element" href="#pchealthstream2py.pchealth.StatusInfoReader.key" x-intersect.margin.0%.0%.-70%.0%="activeSection = '#pchealthstream2py.pchealth.StatusInfoReader.key'">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -203,6 +227,8 @@ from the args and kwargs arguments, respectively.</p>
 <li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader</span></code></a><ul>
 <li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader.close'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader.close"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader.close()</span></code></a></li>
 <li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader.info'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader.info"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader.info</span></code></a></li>
+<li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader.is_alive'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader.is_alive"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader.is_alive()</span></code></a></li>
+<li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader.join'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader.join"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader.join()</span></code></a></li>
 <li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader.key'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader.key"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader.key()</span></code></a></li>
 <li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader.open'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader.open"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader.open()</span></code></a></li>
 <li><a :data-current="activeSection === '#pchealthstream2py.pchealth.StatusInfoReader.read'" class="reference internal" href="#pchealthstream2py.pchealth.StatusInfoReader.read"><code class="docutils literal notranslate"><span class="pre">StatusInfoReader.read()</span></code></a></li>
@@ -222,7 +248,7 @@ from the args and kwargs arguments, respectively.</p>
 </div>
 </footer>
 </div>
-<script src="../_static/documentation_options.js?v=fd825880"></script>
+<script src="../_static/documentation_options.js?v=59fadc99"></script>
 <script src="../_static/doctools.js?v=fd6eb6e6"></script>
 <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
 <script src="../_static/clipboard.min.js?v=a7894cd8"></script>

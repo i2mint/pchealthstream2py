@@ -31,6 +31,25 @@ should be included with read data instead.
 * **Returns:**
   dict
 
+#### is_alive()
+
+Whether the reader is currently reading, whichever thread is doing it.
+
+The work runs in a per-`open()` worker thread (see `_start_worker`), not
+in `self`, so the inherited `Thread.is_alive` would describe the wrong
+thread. (A reader started the legacy way, with `start()` rather than
+`open()`, has no worker and answers for `self` as before.)
+
+* **Return type:**
+  [`bool`](https://docs.python.org/3/builtins/functions.html#bool)
+
+#### join(timeout=None)
+
+Wait for the current run’s worker thread to finish (see `is_alive`).
+
+* **Return type:**
+  [`None`](https://docs.python.org/3/builtins/constants.html#None)
+
 #### key(data)
 
 * **Parameters:**

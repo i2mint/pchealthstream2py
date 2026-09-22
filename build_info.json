@@ -1,32 +1,32 @@
 {
   "schema_version": 1,
-  "built_at": "2026-09-22T12:59:29Z",
+  "built_at": "2026-09-22T14:21:23Z",
   "package": {
     "name": "pchealthstream2py",
-    "version": "0.1.4",
+    "version": "0.1.5",
     "display_name": "pchealthstream2py",
     "source": "pyproject.toml"
   },
   "git": {
     "available": true,
-    "commit": "c572dbab03333d54e4252b89aed15bce12c9c132",
-    "short_commit": "c572dba",
+    "commit": "6e9b935a6fff43368f2a8200ffe14c0f2fa71a52",
+    "short_commit": "6e9b935",
     "branch": "master",
     "tags": [],
     "dirty": false,
     "remote_url": "https://github.com/i2mint/pchealthstream2py",
-    "commit_url": "https://github.com/i2mint/pchealthstream2py/commit/c572dbab03333d54e4252b89aed15bce12c9c132",
+    "commit_url": "https://github.com/i2mint/pchealthstream2py/commit/6e9b935a6fff43368f2a8200ffe14c0f2fa71a52",
     "error": null
   },
   "ci": {
     "provider": "github",
     "repository": "i2mint/pchealthstream2py",
-    "sha": "c572dbab03333d54e4252b89aed15bce12c9c132",
+    "sha": "6e9b935a6fff43368f2a8200ffe14c0f2fa71a52",
     "sha_in_history": true,
     "ref": "refs/heads/master",
     "ref_name": "master",
-    "run_id": "35730413053",
-    "run_url": "https://github.com/i2mint/pchealthstream2py/actions/runs/35730413053",
+    "run_id": "35739523190",
+    "run_url": "https://github.com/i2mint/pchealthstream2py/actions/runs/35739523190",
     "server_url": "https://github.com"
   },
   "tools": {
@@ -56,18 +56,20 @@
   },
   "site": {
     "modules_documented": 2,
-    "objects_documented": 7
+    "objects_documented": 9
   },
   "pypi": {
     "checked": true,
-    "latest": "0.1.4",
-    "relation": "same",
+    "latest": "0.1.6",
+    "relation": "behind",
     "error": null
   },
-  "reproduce": "git clone https://github.com/i2mint/pchealthstream2py && cd pchealthstream2py\ngit checkout c572dbab03333d54e4252b89aed15bce12c9c132\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
+  "reproduce": "git clone https://github.com/i2mint/pchealthstream2py && cd pchealthstream2py\ngit checkout 6e9b935a6fff43368f2a8200ffe14c0f2fa71a52\npip install \"epythet==0.2.12\"\nepythet quickstart . --ignore tests/ scrap/ examples/",
   "warnings": [],
   "alignment": {
-    "aligned": true,
-    "notes": []
+    "aligned": false,
+    "notes": [
+      "The documented version (0.1.5) is behind the latest release on PyPI (0.1.6): `pip install pchealthstream2py` gives newer code than these docs describe."
+    ]
   }
 }
