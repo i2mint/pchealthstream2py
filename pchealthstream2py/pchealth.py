@@ -22,6 +22,9 @@ from stream2py.utility.typing_hints import ComparableType, Any
 __all__ = ["StatusInfo", "StatusInfoReader"]
 
 DFLT_STATUS_INFO_READ_INTERVAL = 1000  # in ms
+# How long `StatusInfoReader.open()` waits for the previous run's worker thread
+# to stop before starting a new one. `None` means wait for as long as it takes.
+DFLT_REOPEN_TIMEOUT_S = None
 
 
 class StatusInfo:
@@ -227,6 +230,8 @@ class StatusInfoReader(SourceReader, threading.Thread):
         read_interval_ms=DFLT_STATUS_INFO_READ_INTERVAL,
         include_network_download_speed: bool = False,
         include_network_upload_speed: bool = False,
+        *,
+        reopen_timeout_s: Optional[float] = DFLT_REOPEN_TIMEOUT_S,
     ):
 
         threading.Thread.__init__(self, daemon=True)
@@ -234,6 +239,7 @@ class StatusInfoReader(SourceReader, threading.Thread):
         self.read_interval_ms = read_interval_ms
         self.include_network_download_speed = include_network_download_speed
         self.include_network_upload_speed = include_network_upload_speed
+        self.reopen_timeout_s = reopen_timeout_s
 
         # Per-instance state. These used to be *class* attributes, which meant
         # every StatusInfoReader shared one queue and one stop flag.
@@ -245,14 +251,65 @@ class StatusInfoReader(SourceReader, threading.Thread):
         # `join()` and `is_alive()`), so shadowing it with an Event breaks
         # `join()` with "TypeError: 'Event' object is not callable".
         self._stop_event: threading.Event = threading.Event()
+        # The thread currently running `run`, or None while the reader has never
+        # been opened. It is `self` for the first run (see `_start_worker`).
+        self._worker: Optional[threading.Thread] = None
 
     def open(self):
+        """Start reading status info in the background.
+
+        Can be called again after `close()`: a reader is reusable, as
+        `SourceReader`'s reuse contract requires. Each call stops and waits for
+        the worker started by the previous call, so exactly one thread feeds
+        the queue at a time.
+        """
+        self._stop_previous_worker()
+
         self._data.clear()
         self._bt = self.get_timestamp()
         self._index = 0
 
         self._stop_event.clear()
-        self.start()
+        self._start_worker()
+
+    def _stop_previous_worker(self):
+        """Signal and wait for the worker started by an earlier `open()`, if any.
+
+        Waiting is required, not cosmetic: `open()` clears the stop flag, and a
+        previous worker still inside its `time.sleep` would never observe the
+        stop, leaving two threads appending to the same queue.
+        """
+        worker = self._worker
+        if worker is None or not worker.is_alive():
+            return
+
+        self._stop_event.set()
+        worker.join(self.reopen_timeout_s)
+        if worker.is_alive():
+            raise RuntimeError(
+                f"{type(self).__name__}.open(): the worker thread of the previous"
+                f" run did not stop within reopen_timeout_s={self.reopen_timeout_s}"
+                f" seconds, so a new one can't be started without ending up with"
+                f" two producers feeding the same queue. Give the reader a longer"
+                f" reopen_timeout_s (or None to wait for as long as it takes)."
+            )
+
+    def _start_worker(self):
+        """Run `run` in a daemon thread, reusing `self` for the very first run.
+
+        A `threading.Thread` can only be started once, so from the second
+        `open()` on the work has to go in a fresh thread. The first `open()`
+        still starts `self`, which keeps `is_alive()`, `join()` and the rest of
+        the inherited `Thread` API behaving exactly as they always have.
+        """
+        if self._worker is None:
+            self._worker = self
+            self.start()
+        else:
+            self._worker = threading.Thread(
+                target=self.run, daemon=True, name=f"{self.name}-worker"
+            )
+            self._worker.start()
 
     def read(self):
         """Returns one data item
