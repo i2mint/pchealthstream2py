@@ -103,3 +103,27 @@ def test_reopen_does_not_leak_worker_threads():
     for worker in workers:
         worker.join(timeout=10)
         assert not worker.is_alive()
+
+
+def test_thread_api_follows_the_current_worker_after_reopen():
+    """`is_alive()` / `join()` must describe the run in progress, not the first one.
+
+    #3 ran the first `open()` in `self` and later ones in fresh threads, so after
+    a reopen the inherited `Thread.is_alive` answered False for a reader that was
+    busy reading (it described the finished first-run thread), and `join()`
+    returned at once instead of waiting for the worker to stop.
+    """
+    reader = StatusInfoReader(read_interval_ms=50)
+    with reader:
+        time.sleep(0.1)
+    reader.join(timeout=10)
+
+    reader.open()
+    try:
+        time.sleep(0.1)
+        assert reader.is_alive()
+    finally:
+        reader.close()
+    reader.join(timeout=10)
+    assert not reader.is_alive()
+    assert not reader._worker.is_alive()
