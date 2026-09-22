@@ -1,6 +1,7 @@
 """Simple tests"""
 
 from pchealthstream2py.pchealth import StatusInfoReader
+import threading
 import time
 from pprint import pprint
 
@@ -43,7 +44,8 @@ def test_stop_does_not_shadow_thread_internals():
     stuck on True after the worker had finished.
     """
     reader = StatusInfoReader(read_interval_ms=50)
-    assert callable(reader._stop)
+    # (`Thread._stop` exists up to Python 3.12; 3.13 removed it.)
+    assert not isinstance(getattr(reader, '_stop', None), threading.Event)
 
     reader.open()
     try:
@@ -127,3 +129,20 @@ def test_thread_api_follows_the_current_worker_after_reopen():
     reader.join(timeout=10)
     assert not reader.is_alive()
     assert not reader._worker.is_alive()
+
+
+def test_open_after_a_legacy_start_leaves_a_single_producer():
+    """A reader started with `start()` (running in `self`), closed, then `open()`ed
+    must not keep the legacy run going: `open()` clears the stop flag, so a run it
+    didn't wait for would never see the stop and would keep feeding the queue."""
+    reader = StatusInfoReader(read_interval_ms=50)
+    reader.start()
+    time.sleep(0.1)
+    reader.close()
+    reader.open()
+    try:
+        assert not threading.Thread.is_alive(reader)  # the legacy run has stopped
+        assert reader.is_alive()  # and the new worker is reading
+    finally:
+        reader.close()
+    reader.join(timeout=10)

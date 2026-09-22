@@ -280,6 +280,11 @@ class StatusInfoReader(SourceReader, threading.Thread):
         stop, leaving two threads appending to the same queue.
         """
         worker = self._worker
+        if worker is None and threading.Thread.is_alive(self):
+            # Started the legacy way (`start()`, so running in `self`) and then
+            # `open()`ed: that run must stop too, or it would miss the stop flag
+            # `open()` clears below and keep feeding the queue next to the new one.
+            worker = self
         if worker is None or not worker.is_alive():
             return
 
